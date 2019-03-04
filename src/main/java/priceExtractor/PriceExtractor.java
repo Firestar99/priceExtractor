@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.UnitValue;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -52,45 +53,48 @@ public class PriceExtractor {
 	}
 	
 	public void run() throws IOException {
+		//read the csv
+		List<String[]> lines;
 		try (CSVReader reader = new CSVReaderBuilder(new FileReader(input))
 				.withCSVParser(new CSVParserBuilder()
 						.withSeparator(';')
 						.build())
 				.build()) {
 			
-			List<String[]> lines = reader.readAll();
-			List<Entry> entries = lines.stream()
-					.sequential()
-					.filter(strings -> strings.length != 0)
-					.map(strings -> {
-						try {
-							return new Entry(strings);
-						} catch (RuntimeException e) {
-							return null;
-						}
-					})
-					.filter(Objects::nonNull)
-					.collect(Collectors.toList());
-			
-			try (PdfDocument pdf = new PdfDocument(new PdfWriter(output))) {
-				try (Document document = new Document(pdf, PageSize.A4)) {
-					Rectangle pageSize = document.getPageEffectiveArea(PageSize.A4);
-					Rectangle outer = new Rectangle(pageSize.getLeft() + margin, pageSize.getBottom() + margin, pageSize.getRight() - margin, pageSize.getTop() - margin);
-					
-					for (Entry entry : entries) {
-						
-						Table table = new Table(1);
-						table.setWidth(createPercentValue(100));
-						
-						table.addCell(createCell(outer, createPercentValue(1f / 6), fontTitle, entry.bezeichnung));
-						table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.kisteInhalt, entry.kisteLiterpreis, entry.kistePreis, entry.kistePfand));
-						table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.flascheInhalt, entry.flaschePreis, entry.flaschePfand));
-						table.addCell(createCell(outer, createPercentValue(1f / 6), fontDesc, entry.weg.name()));
-						
-						document.add(table);
-//						document.newPage();
+			lines = reader.readAll();
+		}
+		
+		//create Entry object
+		List<Entry> entries = lines.stream()
+				.sequential()
+				.filter(strings -> strings.length != 0)
+				.map(strings -> {
+					try {
+						return new Entry(strings);
+					} catch (RuntimeException e) {
+						return null;
 					}
+				})
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+		
+		//write the pdf
+		try (PdfDocument pdf = new PdfDocument(new PdfWriter(output))) {
+			try (Document document = new Document(pdf, PageSize.A4)) {
+				Rectangle pageSize = document.getPageEffectiveArea(PageSize.A4);
+				Rectangle outer = new Rectangle(pageSize.getLeft() + margin, pageSize.getBottom() + margin, pageSize.getRight() - margin, pageSize.getTop() - margin);
+				
+				for (Entry entry : entries) {
+					Table table = new Table(1);
+					table.setWidth(createPercentValue(100));
 					
+					table.addCell(createCell(outer, createPercentValue(1f / 6), fontTitle, entry.bezeichnung));
+					table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.kisteInhalt, entry.kisteLiterpreis, entry.kistePreis, entry.kistePfand));
+					table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.flascheInhalt, entry.flaschePreis, entry.flaschePfand));
+					table.addCell(createCell(outer, createPercentValue(1f / 6), fontDesc, entry.weg.name()));
+					
+					document.add(table);
+					document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 				}
 			}
 		}
