@@ -129,19 +129,26 @@ public class PriceExtractor {
 		public final Weg weg;
 		
 		public Entry(String[] input) {
-			arkitelNr = Integer.parseInt(input[0]);
-			bezeichnung = input[1];
+			arkitelNr = Integer.parseInt(input[computeIndex("A")]);
+			bezeichnung = input[computeIndex("B")];
 			
-			kisteInhalt = input[2];
-			kisteLiterpreis = input[3];
-			kistePreis = input[4];
-			kistePfand = input[5];
+			kisteInhalt = input[computeIndex("C")] + " x " + input[computeIndex("D")];
+			kisteLiterpreis = input[computeIndex("AJ")];
+			kistePreis = input[computeIndex("K")];
+			kistePfand = input[computeIndex("AL")];
 			
-			flascheInhalt = input[6];
-			flaschePreis = input[7];
-			flaschePfand = input[8];
+			flascheInhalt = input[computeIndex("D")];
+			flaschePreis = input[computeIndex("L")];
+			flaschePfand = input[computeIndex("AM")];
 			
-			weg = Weg.parse(input[9]);
+			weg = Weg.parse(input[computeIndex("AN")]);
+		}
+		
+		private static int computeIndex(String column) {
+			int index = 0;
+			for (int i = 0; i < column.length(); i++)
+				index = index * 26 + (column.charAt(i) - 'A' + 1);
+			return index - 1;
 		}
 		
 		@Override
