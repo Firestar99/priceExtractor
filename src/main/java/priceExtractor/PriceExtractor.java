@@ -88,10 +88,25 @@ public class PriceExtractor {
 					Table table = new Table(1);
 					table.setWidth(createPercentValue(100));
 					
-					table.addCell(createCell(outer, createPercentValue(1f / 6), fontTitle, entry.bezeichnung));
-					table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.kisteInhalt, entry.kisteLiterpreis, entry.kistePreis, entry.kistePfand));
-					table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc, entry.flascheInhalt, entry.flaschePreis, entry.flaschePfand));
-					table.addCell(createCell(outer, createPercentValue(1f / 6), fontDesc, entry.weg.name()));
+					//filling the data
+					table.addCell(createCell(outer, createPercentValue(1f / 6), fontTitle,
+							entry.bezeichnung
+					));
+					table.addCell(createCell(outer, createPercentValue(2f / 6), fontDesc,
+							entry.kisteInhalt,
+							entry.kisteLiterpreis,
+							entry.kistePreis,
+							entry.kistePfand
+					));
+					table.addCell(createCell(outer, createPercentValue(2f / 6),
+							fontDesc,
+							entry.flascheInhalt,
+							entry.flaschePreis,
+							entry.flaschePfand
+					));
+					table.addCell(createCell(outer, createPercentValue(1f / 6), fontDesc,
+							entry.weg.name()
+					));
 					
 					document.add(table);
 					document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
