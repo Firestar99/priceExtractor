@@ -1,11 +1,14 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group ''
 version '1.0'
 
 sourceCompatibility = 1.9
+
+mainClassName = "priceExtractor.CmdMain"
 
 repositories {
     mavenCentral()
