@@ -6,7 +6,7 @@ plugins {
 group ''
 version '1.0'
 
-sourceCompatibility = 1.9
+sourceCompatibility = 1.8
 
 mainClassName = "priceExtractor.CmdMain"
 
